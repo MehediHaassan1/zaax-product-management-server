@@ -24,5 +24,7 @@ const productSchema = new Schema<TProduct>({
     inventory: { type: inventorySchema, required: true }
 });
 
+// productSchema.index({ name: 'text', description: 'text' });
+
 // Create the Mongoose model
 export const Product = model<TProduct>('Product', productSchema);

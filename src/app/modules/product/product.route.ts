@@ -3,15 +3,23 @@ import { ProductController } from './product.controller';
 
 const router = express.Router();
 
-router.post('/', ProductController.createProduct);
 
+// get all product + search query product
 router.get('/', ProductController.getAllProducts);
 
+// post product
+router.post('/', ProductController.createProduct);
+
+
+// get single product
 router.get('/:productId', ProductController.getSingleProduct)
 
+// update product
 router.put('/:productId', ProductController.updateProduct);
 
-router.delete('/:productId', ProductController.deleteProduct);
+// delete product
+router.delete('/:productId', ProductController.deleteSingleProduct);
+
 
 export const ProductRouter = router;
 
