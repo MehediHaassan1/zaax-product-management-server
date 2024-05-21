@@ -1,0 +1,62 @@
+import express, { Request, Response } from "express";
+import mongoose from 'mongoose';
+import { Product } from "../product/product.model";
+import { Order } from "./order.model";
+
+const createOrder = async (req: Request, res: Response) => {
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const orderData = req.body;
+        const product = await Product.findById(orderData?.productId).session(session);
+        
+        if (!product) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        if(product.inventory.quantity < orderData.quantity){
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({
+                success: false,
+                message: 'Insufficient quantity available in inventory'
+            });
+        }
+
+        const newOrder = new Order(orderData);
+        const result = await newOrder.save({session})
+
+        product.inventory.quantity -= orderData.quantity;
+        await product.save({session});
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({
+            success: true,
+            message: "Order created successfully",
+            data: result
+        })
+
+    } catch (err: any) {
+        await session.abortTransaction();
+        session.endSession();
+
+        res.status(500).json({
+            success: false,
+            message: err.message || "Something went wrong",
+            error: err
+        });
+    }
+}
+
+export const OrderControllers = {
+    createOrder
+}

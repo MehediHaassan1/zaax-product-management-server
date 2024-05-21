@@ -24,7 +24,17 @@ const productSchema = new Schema<TProduct>({
     inventory: { type: inventorySchema, required: true }
 });
 
-// productSchema.index({ name: 'text', description: 'text' });
+// middlewares
+
+// update the inStock field based on quantity
+productSchema.pre('save', function (next) {
+    if (this.inventory.quantity === 0) {
+        this.inventory.inStock = false;
+    } else {
+        this.inventory.inStock = true;
+    }
+    next();
+});
 
 // Create the Mongoose model
 export const Product = model<TProduct>('Product', productSchema);
