@@ -30,7 +30,7 @@ const getSingleProductFromDB = async (id: string) => {
     return result;
 }
 
-const updateProductIntoDB = async (productID: string, updatedProductData: TProduct) => {
+const updateProductIntoDB = async (productID: string, updatedProductData: Partial<TProduct>) => {
     const result = await Product.findByIdAndUpdate(productID,
         { $set: updatedProductData },
         { new: true, runValidators: true }

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./product.service";
+import { TProduct } from "./product.interface";
 
 const createProduct = async (req: Request, res: Response) => {
     try {
@@ -67,8 +68,7 @@ const getSingleProduct = async (req: Request, res: Response) => {
 const updateProduct = async (req: Request, res: Response) => {
     try {
         const { productId } = req.params;
-        const productData = req.body;
-
+        const productData: Partial<TProduct> = req.body;
         const result = await ProductServices.updateProductIntoDB(productId, productData);
         res.status(200).json({
             success: true,
