@@ -1,5 +1,3 @@
-import { Types } from "mongoose";
-
 export type TOrder = {
     email: string;
     productId: string;
